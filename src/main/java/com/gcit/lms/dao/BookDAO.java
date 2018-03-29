@@ -117,7 +117,14 @@ public class BookDAO extends BaseDAO<Book> implements ResultSetExtractor<List<Bo
 				"select * from tbl_book where bookId IN(select bookId from tbl_book_genres where genre_id=?)",
 				new Object[] { genre.getGenre_id() }, this);
 	}
+	
+	public List<Book> readBooksByPublisherId(Publisher publisher) throws ClassNotFoundException, SQLException {
 
+		return jdbcTemplate.query(
+				"select * from tbl_book where pubId IN(select publisherId from tbl_publisher where publisherId=?)",
+				new Object[] { publisher.getPublisherId() }, this);
+	}
+	
 	public List<Book> readBooksByBranch(Branch branch) throws ClassNotFoundException, SQLException {
 
 		return jdbcTemplate.query(

@@ -221,9 +221,13 @@ public class AdminService extends BaseController {
 	@RequestMapping(value="readPublishers",method=RequestMethod.GET,produces="application/json")
 	@Transactional
 	public List<Publisher> readPublisher() throws SQLException{
-		 
+		List<Publisher> publishers = new ArrayList<>();
 		try {
-			return publisherdao.readPublishers("");
+			publishers = publisherdao.readPublishers("");
+			for (Publisher p : publishers) {
+				p.setBooks(bookdao.readBooksByPublisherId(p));
+			}
+			return publishers;
 		} catch (ClassNotFoundException | SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -234,9 +238,13 @@ public class AdminService extends BaseController {
 	@RequestMapping(value="readPublisherByName/{searchPublisher}",method=RequestMethod.GET,produces="application/json")
 	@Transactional
 	public List<Publisher> readPublisher(@PathVariable String searchPublisher) throws SQLException{
-		 
+		List<Publisher> publishers = new ArrayList<>();
 		try {
-			return publisherdao.readPublishers(searchPublisher);
+			publishers =publisherdao.readPublishers(searchPublisher);
+			for (Publisher p : publishers) {
+				p.setBooks(bookdao.readBooksByPublisherId(p));
+			}
+			return publishers;
 		} catch (ClassNotFoundException | SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
