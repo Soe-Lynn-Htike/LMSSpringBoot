@@ -135,6 +135,7 @@ public class AdminService extends BaseController {
 	}
 	
 	//update book
+	
 	@Transactional
 	public void updateBook(Book book) throws SQLException {
 		
@@ -168,11 +169,12 @@ public class AdminService extends BaseController {
 		}
 	}
 	
-	// read book
+	
+	@RequestMapping(value="readBooks",method=RequestMethod.GET,produces="application/json")
 	@Transactional
-	public List<Book> readBook(Book book) throws SQLException {
+	public List<Book> readBooks() throws SQLException {
 		 try {
-			return bookdao.readBooksByTitle(book.getTitle());
+			return bookdao.readBooks();
 			
 		} catch (ClassNotFoundException | SQLException e) {
 			// TODO Auto-generated catch block
@@ -181,6 +183,19 @@ public class AdminService extends BaseController {
 		 return null;
 	}
 	
+	// read book by title
+	@RequestMapping(value="readBooksByTitle/{searchTitle}",method=RequestMethod.GET,produces="application/json")
+	@Transactional
+	public List<Book> readBooksByTitle(@PathVariable String searchTitle) throws SQLException {
+		 try {
+			return bookdao.readBooksByTitle(searchTitle);
+			
+		} catch (ClassNotFoundException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		 return null;
+	}
 	
 	// update Publisher
 	@Transactional

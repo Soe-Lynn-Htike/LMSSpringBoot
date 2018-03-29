@@ -102,7 +102,7 @@ public class BookDAO extends BaseDAO<Book> implements ResultSetExtractor<List<Bo
 		bookTitle = "%" + bookTitle + "%";
 		return jdbcTemplate.query("select * from tbl_book where title like ?", new Object[] { bookTitle }, this);
 	}
-
+	
 	public List<Book> readBooksByAuthorId(Author author) throws ClassNotFoundException, SQLException {
 
 		return jdbcTemplate.query(
