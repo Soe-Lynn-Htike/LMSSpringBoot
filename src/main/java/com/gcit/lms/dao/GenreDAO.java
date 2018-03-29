@@ -48,6 +48,7 @@ public class GenreDAO extends BaseDAO<Genre> implements ResultSetExtractor<List<
 		List<Genre> genres = new ArrayList<>();
 		while(rs.next()) {
 			Genre g = new Genre();
+			g.setGenre_id(rs.getInt("genre_id"));
 			g.setGenre_name(rs.getString("genre_name"));
 			genres.add(g);
 		}

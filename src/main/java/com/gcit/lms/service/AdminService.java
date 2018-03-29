@@ -174,7 +174,7 @@ public class AdminService extends BaseController {
 	@Transactional
 	public List<Book> readBooks() throws SQLException {
 		 try {
-			return bookdao.readBooks();
+			return bookdao.readBooks("");
 			
 		} catch (ClassNotFoundException | SQLException e) {
 			// TODO Auto-generated catch block
@@ -188,7 +188,7 @@ public class AdminService extends BaseController {
 	@Transactional
 	public List<Book> readBooksByTitle(@PathVariable String searchTitle) throws SQLException {
 		 try {
-			return bookdao.readBooksByTitle(searchTitle);
+			return bookdao.readBooks(searchTitle);
 			
 		} catch (ClassNotFoundException | SQLException e) {
 			// TODO Auto-generated catch block
@@ -198,6 +198,7 @@ public class AdminService extends BaseController {
 	}
 	
 	// update Publisher
+	
 	@Transactional
 	public void updatePublisher(Publisher publisher) throws SQLException {
 	
@@ -217,17 +218,32 @@ public class AdminService extends BaseController {
 	}
 	
 	// read Publisher
+	@RequestMapping(value="readPublishers",method=RequestMethod.GET,produces="application/json")
 	@Transactional
-	public List<Publisher> readPublisher(Publisher publisher) throws SQLException{
+	public List<Publisher> readPublisher() throws SQLException{
 		 
 		try {
-			return publisherdao.readPublishers(publisher.getPublisherName());
+			return publisherdao.readPublishers("");
 		} catch (ClassNotFoundException | SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
 	}
+	
+	@RequestMapping(value="readPublisherByName/{searchPublisher}",method=RequestMethod.GET,produces="application/json")
+	@Transactional
+	public List<Publisher> readPublisher(@PathVariable String searchPublisher) throws SQLException{
+		 
+		try {
+			return publisherdao.readPublishers(searchPublisher);
+		} catch (ClassNotFoundException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	
 	// update Genre
 	
@@ -248,9 +264,11 @@ public class AdminService extends BaseController {
 	}
 	
 	// read Genre
-	@Transactional
-	public List<Genre> readGenre(Genre genre) throws SQLException{
 	
+	@Transactional
+	@RequestMapping(value="readGenres",method=RequestMethod.GET,produces="application/json")
+	public List<Genre> readGenres(Genre genre) throws SQLException {
+
 		try {
 			return genredao.readGenres(genre.getGenre_name());
 		} catch (ClassNotFoundException | SQLException e) {
@@ -258,7 +276,21 @@ public class AdminService extends BaseController {
 			e.printStackTrace();
 		}
 		return null;
-		
+
+	}
+	
+	@RequestMapping(value="readGenreByName/{searchGenre}",method=RequestMethod.GET,produces="application/json")
+	@Transactional
+	public List<Genre> readGenreByName(@PathVariable String searchGenre) throws SQLException {
+
+		try {
+			return genredao.readGenres(searchGenre);
+		} catch (ClassNotFoundException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+
 	}
 	
 	
@@ -312,10 +344,23 @@ public class AdminService extends BaseController {
 	}
 	
 	// read Branch
+	@RequestMapping(value="readBranches",method=RequestMethod.GET,produces="application/json")
 	@Transactional
-	public List<Branch> readBranch(Branch branch) throws SQLException {
+	public List<Branch> readBranches() throws SQLException {
 		try {
-			return branchdao.readBranches(branch.getBranchName());
+			return branchdao.readBranches("");
+		} catch (ClassNotFoundException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	@RequestMapping(value="readBranchByName/{searchBranchName}",method=RequestMethod.GET,produces="application/json")
+	@Transactional
+	public List<Branch> readBranchByName(@PathVariable String searchBranchName) throws SQLException {
+		try {
+			return branchdao.readBranches(searchBranchName);
 		} catch (ClassNotFoundException | SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
