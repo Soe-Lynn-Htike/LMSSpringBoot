@@ -111,11 +111,11 @@ public class BookDAO extends BaseDAO<Book> implements ResultSetExtractor<List<Bo
 				new Object[] { author.getAuthorId() }, this);
 	}
 
-	public List<Book> readBooksByGenreId(Author author) throws ClassNotFoundException, SQLException {
+	public List<Book> readBooksByGenreId(Genre genre) throws ClassNotFoundException, SQLException {
 
 		return jdbcTemplate.query(
 				"select * from tbl_book where bookId IN(select bookId from tbl_book_genres where genre_id=?)",
-				new Object[] { author.getAuthorId() }, this);
+				new Object[] { genre.getGenre_id() }, this);
 	}
 
 	public List<Book> readBooksByBranch(Branch branch) throws ClassNotFoundException, SQLException {

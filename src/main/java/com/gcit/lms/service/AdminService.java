@@ -267,10 +267,14 @@ public class AdminService extends BaseController {
 	
 	@Transactional
 	@RequestMapping(value="readGenres",method=RequestMethod.GET,produces="application/json")
-	public List<Genre> readGenres(Genre genre) throws SQLException {
-
+	public List<Genre> readGenres() throws SQLException {
+			List<Genre> genres = new ArrayList<>();
 		try {
-			return genredao.readGenres(genre.getGenre_name());
+				genres = genredao.readGenres("");
+				for(Genre g : genres) {
+					g.setBooks(bookdao.readBooksByGenreId(g));
+				}
+				return genres;
 		} catch (ClassNotFoundException | SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
