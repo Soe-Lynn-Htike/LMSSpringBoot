@@ -12,6 +12,7 @@ import java.util.List;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
+import com.gcit.lms.entity.BookCopies;
 import com.gcit.lms.entity.Branch;
 
 /**
@@ -39,7 +40,6 @@ public class BranchDAO extends BaseDAO<Branch> implements ResultSetExtractor<Lis
 	public void deleteBranch(Branch b) throws ClassNotFoundException, SQLException {
 		jdbcTemplate.update("delete tbl_library_branch from where branchId =?",new Object[] {b.getBranchId()});
 	}
-	
 	public List<Branch> readBranches(String branchName) throws ClassNotFoundException, SQLException{
 	
 		if (branchName != null && !branchName.isEmpty()) {

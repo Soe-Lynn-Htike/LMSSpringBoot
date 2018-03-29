@@ -13,6 +13,7 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
 import com.gcit.lms.entity.BookCopies;
+import com.gcit.lms.entity.Branch;
 
 /**
  * @author Aaron
@@ -48,7 +49,12 @@ public class BookCopiesDAO extends BaseDAO<BookCopies> implements ResultSetExtra
 			return books.get(0);
 		}
 		return null;
-	} 
+	}
+	public List<BookCopies> getBookCopiesByBranch(Branch branch) throws ClassNotFoundException, SQLException {
+		
+		return jdbcTemplate.query("select * from tbl_book_copies where branchId in (select branchId from tbl_library_branch where branchId =?)", new Object[] {branch.getBranchId()},this);
+	}
+	
 	public void checkOutBookCopies(BookCopies bookCopies) throws ClassNotFoundException, SQLException {
 		jdbcTemplate.update("update tbl_book_copies set noOfCopies = noOfCopies-1 where bookId = ? and branchId = ?",new Object[] { bookCopies.getBookId(), bookCopies.getBranchId() });		
 	}

@@ -294,9 +294,13 @@ public class AdminService extends BaseController {
 	@RequestMapping(value="readGenreByName/{searchGenre}",method=RequestMethod.GET,produces="application/json")
 	@Transactional
 	public List<Genre> readGenreByName(@PathVariable String searchGenre) throws SQLException {
-
+		List<Genre> genres = new ArrayList<>();
 		try {
-			return genredao.readGenres(searchGenre);
+			genres =genredao.readGenres(searchGenre);
+			for (Genre g : genres) {
+				g.setBooks(bookdao.readBooksByGenreId(g));
+			}
+			return genres;
 		} catch (ClassNotFoundException | SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -359,8 +363,14 @@ public class AdminService extends BaseController {
 	@RequestMapping(value="readBranches",method=RequestMethod.GET,produces="application/json")
 	@Transactional
 	public List<Branch> readBranches() throws SQLException {
+
+		List<Branch> branches = new ArrayList<>();
 		try {
-			return branchdao.readBranches("");
+			branches = branchdao.readBranches("");
+			for (Branch branch : branches) {
+				branch.setBookcopies(bookCopiesdao.getBookCopiesByBranch(branch));
+			}
+			return branches;
 		} catch (ClassNotFoundException | SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -371,8 +381,12 @@ public class AdminService extends BaseController {
 	@RequestMapping(value="readBranchByName/{searchBranchName}",method=RequestMethod.GET,produces="application/json")
 	@Transactional
 	public List<Branch> readBranchByName(@PathVariable String searchBranchName) throws SQLException {
+		List<Branch> branches = new ArrayList<>();
 		try {
-			return branchdao.readBranches(searchBranchName);
+			branches = branchdao.readBranches("");
+			for (Branch branch : branches) {
+				branch.setBookcopies(bookCopiesdao.getBookCopiesByBranch(branch));
+			}
 		} catch (ClassNotFoundException | SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
