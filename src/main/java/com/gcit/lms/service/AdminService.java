@@ -135,9 +135,7 @@ public class AdminService extends BaseController {
 				Integer bookId = bookdao.createBookWithPK(book);
 				book.setBookId(bookId);
 				book.setPublisherId(book.getPublisherId());
-				// save in tbl_book_authors
 				bookdao.saveBookAuthor(book);
-				// save in tbl_book_genre
 				bookdao.saveBookGenre(book);
 				// add to book genre
 				// add to publisher
@@ -155,8 +153,18 @@ public class AdminService extends BaseController {
 	@RequestMapping(value="readBooks",method=RequestMethod.GET,produces="application/json")
 	@Transactional
 	public List<Book> readBooks() throws SQLException {
+		List<Book> books = new ArrayList<>();
 		 try {
-			return bookdao.readBooks("");
+			 
+			 books = bookdao.readBooks("");
+			 for(Book b : books) {
+				 b.setAuthors(adao.readAuthorsByBookId(b));
+				 b.setGenres(genredao.getGenresByBookId(b));
+				 b.setPublisher(publisherdao.getPublierbyBookId(b));
+				 b.setBookcopies(bookCopiesdao.getBookCopiesByBookId(b));
+			 }
+			 
+			 return books;
 			
 		} catch (ClassNotFoundException | SQLException e) {
 			// TODO Auto-generated catch block
@@ -169,8 +177,16 @@ public class AdminService extends BaseController {
 	@RequestMapping(value="readBooksByTitle/{searchTitle}",method=RequestMethod.GET,produces="application/json")
 	@Transactional
 	public List<Book> readBooksByTitle(@PathVariable String searchTitle) throws SQLException {
-		 try {
-			return bookdao.readBooks(searchTitle);
+		List<Book> books = new ArrayList<>(); 
+		try {
+			 books =  bookdao.readBooks(searchTitle);
+			 for(Book book : books) {
+				 book.setAuthors(adao.readAuthorsByBookId(book));
+				 book.setGenres(genredao.getGenresByBookId(book));
+				 book.setPublisher(publisherdao.getPublierbyBookId(book));
+				 book.setBookcopies(bookCopiesdao.getBookCopiesByBookId(book));
+			 }
+			 return books;
 			
 		} catch (ClassNotFoundException | SQLException e) {
 			// TODO Auto-generated catch block
@@ -293,9 +309,9 @@ public class AdminService extends BaseController {
 	
 	
 	//update Borrower
-	
+	@RequestMapping(value="updateBorrower",method=RequestMethod.POST,consumes="application/json")
 	@Transactional
-	public void updateBorrower(Borrower borrower) throws SQLException {
+	public void updateBorrower(@RequestBody Borrower borrower) throws SQLException {
 		try {
 			if (borrower.getCardNo() != null && borrower.getName() != null && borrower.getAddress() != null
 					&& borrower.getPhone() != null) {
@@ -364,8 +380,9 @@ public class AdminService extends BaseController {
 	}
 	
 	// Library Branch
+	@RequestMapping(value="updateBranch",method=RequestMethod.POST,consumes="application/json")
 	@Transactional
-	public void updateBranch(Branch branch) throws SQLException {
+	public void updateBranch(@RequestBody Branch branch) throws SQLException {
 		try {
 			if (branch.getBranchId() != null && branch.getBranchName() != null && branch.getBranchAddress() != null) {
 				branchdao.updateBranch(branch);
@@ -418,8 +435,9 @@ public class AdminService extends BaseController {
 	}
 	
 	//Book Loan
+	@RequestMapping(value="updateBookLoan",method=RequestMethod.POST,consumes="application/json")
 	@Transactional
-	public void updateBookLoan(BookLoan bookLoan) throws SQLException {
+	public void updateBookLoan(@RequestBody BookLoan bookLoan) throws SQLException {
 		
 		try {
 
@@ -440,10 +458,12 @@ public class AdminService extends BaseController {
 		}
 	}
 	
+	
 	// override  Book Loan Due Date
+	@RequestMapping(value="overrideBookLoanDueDate",method=RequestMethod.POST,consumes="application/json")
 	@Transactional
-	public void overrideBookLoanDueDate(BookLoan bookLoan) throws SQLException{
-		
+	public void overrideBookLoanDueDate(@RequestBody BookLoan bookLoan) throws SQLException{
+
 		try {
 
 			bookloandao.overrideDueDate(bookLoan);
@@ -454,9 +474,10 @@ public class AdminService extends BaseController {
 		}
 	}
 	
+	@RequestMapping(value="updateBookLoanDueDate",method=RequestMethod.POST,consumes="application/json")
 	@Transactional
-	public void updateBookLoanDueDate(BookLoan bookLoan) throws SQLException{
-		
+	public void updateBookLoanDueDate(@RequestBody BookLoan bookLoan) throws SQLException{
+
 		try {
 
 			bookloandao.updateBookLoanDueDate(bookLoan);

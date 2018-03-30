@@ -12,6 +12,7 @@ import java.util.List;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
+import com.gcit.lms.entity.Book;
 import com.gcit.lms.entity.Genre;
 
 /**
@@ -31,6 +32,10 @@ public class GenreDAO extends BaseDAO<Genre> implements ResultSetExtractor<List<
 	}
 	public void deleteGenre(Genre g) throws ClassNotFoundException, SQLException {
 		jdbcTemplate.update("delete  from tbl_genre where genre_id=?",new Object[] {g.getGenre_id()});
+	}
+	
+	public List<Genre> getGenresByBookId(Book book){
+		return jdbcTemplate.query("select * from tbl_genre where genre_id IN (select genre_id from tbl_book_genres where bookId=?);",new Object[] {book.getBookId()} ,this);
 	}
 	public List<Genre> readGenres(String genreName) throws ClassNotFoundException,SQLException {
 		if(genreName !=null && !genreName.isEmpty()){

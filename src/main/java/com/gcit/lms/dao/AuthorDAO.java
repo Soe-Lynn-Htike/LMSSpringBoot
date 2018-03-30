@@ -40,7 +40,11 @@ public class AuthorDAO extends BaseDAO<Author> implements ResultSetExtractor<Lis
 				new Object[] { author.getAuthorName(), author.getAuthorId() });
 
 	}
-
+	
+	public List<Author> readAuthorsByBookId(Book book){
+		
+		return jdbcTemplate.query("select * from tbl_author where authorId IN (select authorId from tbl_book_authors where bookId=?);",new Object[] {book.getBookId()},this);
+	}
 	public void deleteAuthor(Author author) throws ClassNotFoundException, SQLException {
 
 		jdbcTemplate.update("DELETE  FROM tbl_author WHERE authorId =?", new Object[] { author.getAuthorId() });

@@ -12,6 +12,7 @@ import java.util.List;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
+import com.gcit.lms.entity.Book;
 import com.gcit.lms.entity.BookCopies;
 import com.gcit.lms.entity.Branch;
 
@@ -49,6 +50,10 @@ public class BookCopiesDAO extends BaseDAO<BookCopies> implements ResultSetExtra
 			return books.get(0);
 		}
 		return null;
+	}
+	
+	public List<BookCopies> getBookCopiesByBookId(Book book){
+		return jdbcTemplate.query("select * from tbl_book_copies where bookId  IN (select bookId  from tbl_book where bookId=?);", new Object[] {book.getBookId()},this);
 	}
 	public List<BookCopies> getBookCopiesByBranch(Branch branch) throws ClassNotFoundException, SQLException {
 		

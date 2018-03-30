@@ -12,6 +12,7 @@ import java.util.List;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
+import com.gcit.lms.entity.Book;
 import com.gcit.lms.entity.Publisher;
 
 /**
@@ -35,6 +36,17 @@ public class PublisherDAO extends BaseDAO<Publisher> implements ResultSetExtract
 
 	public void deletePublisher(Publisher p) throws ClassNotFoundException, SQLException {
 		jdbcTemplate.update("delete from tbl_publisher where publiserId = ?",new Object[] {p.getPublisherId()});
+	}
+	
+	public Publisher getPublierbyBookId(Book book) {
+		List<Publisher> publishers = new ArrayList<>();
+		publishers =jdbcTemplate.query("select * from tbl_publisher where publisherId IN (select pubId  from tbl_book where bookId=?);",new Object[] {book.getBookId()},this);
+		if(publishers!=null) {
+			return publishers.get(0);
+		}
+		else {
+			return null;
+		}
 	}
 	
 	public List<Publisher> readPublishers(String publisherName) throws ClassNotFoundException,SQLException {
