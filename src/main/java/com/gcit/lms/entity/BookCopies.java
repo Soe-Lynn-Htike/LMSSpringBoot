@@ -15,8 +15,8 @@ public class BookCopies implements Serializable {
 	private Integer bookId;
 	private Integer branchId;
 	private Integer noOfCopies;
-	private List<Book> books;
-	private List<Branch> branch;
+	private Book book;
+	private Branch branch;
 	
 	public Integer getBookId() {
 		return bookId;
@@ -36,16 +36,16 @@ public class BookCopies implements Serializable {
 	public void setNoOfCopies(Integer noOfCopies) {
 		this.noOfCopies = noOfCopies;
 	}
-	public List<Book> getBooks() {
-		return books;
+	public Book getBook() {
+		return book;
 	}
-	public void setBooks(List<Book> book) {
-		this.books = book;
+	public void setBook(Book book) {
+		this.book = book;
 	}
-	public List<Branch> getBranch() {
+	public Branch getBranch() {
 		return branch;
 	}
-	public void setBranch(List<Branch> branch) {
+	public void setBranch(Branch branch) {
 		this.branch = branch;
 	}
 	

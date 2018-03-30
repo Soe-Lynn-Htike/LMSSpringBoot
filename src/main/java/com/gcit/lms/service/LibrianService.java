@@ -11,6 +11,11 @@ import java.util.Scanner;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.gcit.lms.dao.AuthorDAO;
 import com.gcit.lms.dao.BookCopiesDAO;
@@ -29,7 +34,8 @@ import com.gcit.lms.entity.Branch;
  * @author Aaron
  *
  */
-public class LibrianService {
+@RestController
+public class LibrianService extends BaseController {
 
 	@Autowired
 	 AuthorDAO adao;
@@ -55,41 +61,17 @@ public class LibrianService {
 	@Autowired
 	BookLoanDAO bookloandao;
 	
+	/*@RequestMapping(value = "readBranches", method = RequestMethod.GET, produces = "application/json")
 	@Transactional
-	public List<Branch> readBranches(String input) throws SQLException {
-		try {
-			return branchdao.readBranches(input);
-		} catch (ClassNotFoundException | SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	
-	@Transactional
-	public void updateBranch(Branch branch) throws SQLException {
-		
-		try {
-			if (branch.getBranchAddress().equals("N/A") && branch.getBranchName() != "N/A") {
-				branchdao.updateBranchByName(branch);
-			} else if (branch.getBranchName().equals("N/A") && branch.getBranchAddress() != "N/A") {
-				branchdao.updateBranchByAddress(branch);
-			} else {
-				branchdao.updateBranch(branch);
-			}
-		} catch (ClassNotFoundException | SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	@Transactional
-	public List<Book> readBooks(Branch branch) throws SQLException{
-		 
-		try {
+	public List<Branch> readBranches() throws SQLException {
 
-			return bookdao.readBooksByBranch(branch);
+		List<Branch> branches = new ArrayList<>();
+		try {
+			branches = branchdao.readBranches("");
+			for (Branch branch : branches) {
+				branch.setBookcopies(bookCopiesdao.getBookCopiesByBranch(branch));
+			}
+			return branches;
 		} catch (ClassNotFoundException | SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -97,8 +79,52 @@ public class LibrianService {
 		return null;
 	}
 	
+	
+	@RequestMapping(value = "updateBranch", method = RequestMethod.POST, consumes = "application/json")
 	@Transactional
-	public void updateNoOfCopies(BookCopies bookcopies) throws SQLException {
+	public void updateBranch(@RequestBody Branch branch) throws SQLException {
+		try {
+			if (branch.getBranchId() != null && branch.getBranchName() != null && branch.getBranchAddress() != null) {
+				branchdao.updateBranch(branch);
+			} else if (branch.getBranchId() == null && branch.getBranchName() != null
+					&& branch.getBranchAddress() != null) {
+				branchdao.createBranch(branch);
+			} else {
+				branchdao.deleteBranch(branch);
+			}
+
+		} catch (ClassNotFoundException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}*/
+	
+	
+	@RequestMapping(value = "readBooksByBranch/{searchBranch}", method = RequestMethod.GET, produces = "application/json")
+	@Transactional
+	public List<Book> readBooksByTitle(@PathVariable String searchBranch) throws SQLException {
+		List<Book> books = new ArrayList<>();
+		try {
+			 books = bookdao.readBooksByBranch(Integer.parseInt(searchBranch));
+			for (Book book : books) {
+				book.setAuthors(adao.readAuthorsByBookId(book));
+				book.setGenres(genredao.getGenresByBookId(book));
+				book.setPublisher(publisherdao.getPublierbyBookId(book));
+				book.setBookcopies(bookCopiesdao.getBookCopiesByBookId(book));
+			}
+			return books;
+
+		} catch (ClassNotFoundException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
+	@RequestMapping(value = "updateNoOfCopies", method = RequestMethod.POST, produces = "application/json")
+	@Transactional
+	public void updateNoOfCopies(@RequestBody BookCopies bookcopies) throws SQLException {
 		
 		try {
 			bookCopiesdao.updateBookCopies(bookcopies);
@@ -108,11 +134,15 @@ public class LibrianService {
 		}
 	}
 	
+	@RequestMapping(value = "showNoOfCopies", method = RequestMethod.POST, produces = "application/json")
 	@Transactional
-	public BookCopies showNoOfCopies(BookCopies bookCopies) throws SQLException {
-		
+	public BookCopies showNoOfCopies(@RequestBody BookCopies bookCopies) throws SQLException {
+			BookCopies bookcopy = new BookCopies();
 		try {
-			return bookCopiesdao.getBookCopiesbyBranchbyBook(bookCopies);
+			  bookcopy = bookCopiesdao.getBookCopiesbyBranchbyBook(bookCopies);
+			  bookcopy.setBook(bookdao.readBooksByBookCopies(bookcopy.getBookId()));
+			  bookcopy.setBranch(branchdao.readBranchByBookCopiesBranchId(bookcopy.getBranchId()));
+			  return bookcopy ;
 		} catch (ClassNotFoundException | SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

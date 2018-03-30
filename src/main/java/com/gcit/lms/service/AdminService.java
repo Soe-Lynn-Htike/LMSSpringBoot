@@ -119,9 +119,9 @@ public class AdminService extends BaseController {
 	}
 
 	// update book
-
+	@RequestMapping(value = "updateBook", method = RequestMethod.POST, consumes = "application/json")
 	@Transactional
-	public void updateBook(Book book) throws SQLException {
+	public void updateBook(@RequestBody Book book) throws SQLException {
 
 		try {
 			if (book.getBookId() != null && book.getTitle() != null) {
@@ -470,12 +470,9 @@ public class AdminService extends BaseController {
 	public void updateBookLoanDueDate(@RequestBody BookLoan bookLoan) throws SQLException {
 
 		try {
-
 			bookloandao.updateBookLoanDueDate(bookLoan);
-
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
-
 		}
 	}
 

@@ -125,13 +125,23 @@ public class BookDAO extends BaseDAO<Book> implements ResultSetExtractor<List<Bo
 				new Object[] { publisher.getPublisherId() }, this);
 	}
 	
-	public List<Book> readBooksByBranch(Branch branch) throws ClassNotFoundException, SQLException {
+	public List<Book> readBooksByBranch(Integer searchBranch) throws ClassNotFoundException, SQLException {
 
 		return jdbcTemplate.query(
 				"select * from tbl_book b where Exists(select null from tbl_book_copies bc where b.bookId = bc.bookId and bc.noOfCopies >1 and bc.branchId=? )",
-				new Object[] { branch.getBranchId() }, this);
+				new Object[] { searchBranch }, this);
 	}
+	public Book readBooksByBookCopies(Integer searchBranch) throws ClassNotFoundException, SQLException {
 
+		List<Book> books= jdbcTemplate.query(
+				"select * from tbl_book where bookId IN(select bookId from tbl_book_copies where bookId=?);",
+				new Object[] { searchBranch }, this);
+		if (books != null) {
+			return books.get(0);
+		}
+
+		return null;
+	}
 	public Book getBookByPK(Book book) {
 
 		List<Book> books = jdbcTemplate.query("select * from tbl_book where bookId=?",
@@ -152,6 +162,7 @@ public class BookDAO extends BaseDAO<Book> implements ResultSetExtractor<List<Bo
 			Book book = new Book();
 			book.setBookId(rs.getInt("bookId"));
 			book.setTitle(rs.getString("title"));
+			book.setPublisherId(rs.getInt("pubId"));
 			books.add(book);
 		}
 		return books;

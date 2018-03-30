@@ -71,7 +71,7 @@ public class BorrowerService {
 	}
 	
 	
-	@Transactional
+	/*@Transactional
 	public List<Book> readBooksCheckOut(Branch branch) throws SQLException {
 		
 		try {
@@ -81,7 +81,7 @@ public class BorrowerService {
 			e.printStackTrace();
 		}
 		return null;
-	}
+	}*/
 	
 	@Transactional
 	public void checkOutBook(BookLoan bookLoan, BookCopies bookCopies) throws SQLException {
