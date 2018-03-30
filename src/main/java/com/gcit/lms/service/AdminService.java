@@ -3,11 +3,9 @@
  */
 package com.gcit.lms.service;
 
-
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -40,41 +38,41 @@ import com.gcit.lms.entity.Publisher;
  */
 @RestController
 public class AdminService extends BaseController {
-	
+
 	@Autowired
-	 AuthorDAO adao;
-	
+	AuthorDAO adao;
+
 	@Autowired
-	 BookDAO bookdao;
-	
+	BookDAO bookdao;
+
 	@Autowired
 	GenreDAO genredao;
-	
+
 	@Autowired
 	PublisherDAO publisherdao;
-	
+
 	@Autowired
 	BookCopiesDAO bookCopiesdao;
-	
+
 	@Autowired
 	BorrowerDAO borrowerdao;
-	
+
 	@Autowired
 	BranchDAO branchdao;
-	
+
 	@Autowired
-    BookLoanDAO bookloandao;
-	
-	//update author
-	
-	@RequestMapping(value="updateAuthor",method=RequestMethod.POST,consumes="application/json")
+	BookLoanDAO bookloandao;
+
+	// update author
+
+	@RequestMapping(value = "updateAuthor", method = RequestMethod.POST, consumes = "application/json")
 	@Transactional
 	public void updateAuthor(@RequestBody Author author) throws SQLException {
-		
+
 		try {
 			if (author.getAuthorId() != null && author.getAuthorName() != null) {
 				adao.updateAuthor(author);
-			} else if (author.getAuthorId() == null && author.getAuthorName()!= null) {
+			} else if (author.getAuthorId() == null && author.getAuthorName() != null) {
 				adao.createAuthor(author);
 			} else {
 				adao.deleteAuthor(author);
@@ -82,14 +80,13 @@ public class AdminService extends BaseController {
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace(); // log your stacktrace
-			// display a meaningful user	
+			// display a meaningful user
 		}
 	}
-	
-	
-	@RequestMapping(value="readAuthors",method=RequestMethod.GET,produces="application/json")
+
+	@RequestMapping(value = "readAuthors", method = RequestMethod.GET, produces = "application/json")
 	@Transactional
-	public List<Author> readAllAuthors(){
+	public List<Author> readAllAuthors() {
 		List<Author> authors = new ArrayList<>();
 		try {
 			authors = adao.readAuthors();
@@ -103,10 +100,10 @@ public class AdminService extends BaseController {
 		}
 		return null;
 	}
-	
-	@RequestMapping(value="readAuthorsByName/{searchString}",method=RequestMethod.GET,produces="application/json")
+
+	@RequestMapping(value = "readAuthorsByName/{searchString}", method = RequestMethod.GET, produces = "application/json")
 	@Transactional
-	public List<Author> searchAuthorsByName(@PathVariable String searchString){
+	public List<Author> searchAuthorsByName(@PathVariable String searchString) {
 		List<Author> authors = new ArrayList<>();
 		try {
 			authors = adao.readAuthorsByName(searchString);
@@ -120,12 +117,12 @@ public class AdminService extends BaseController {
 		}
 		return null;
 	}
-	
-	//update book
-	
+
+	// update book
+
 	@Transactional
 	public void updateBook(Book book) throws SQLException {
-		
+
 		try {
 			if (book.getBookId() != null && book.getTitle() != null) {
 				bookdao.updateBook(book);
@@ -148,58 +145,57 @@ public class AdminService extends BaseController {
 			e.printStackTrace();
 		}
 	}
-	
-	
-	@RequestMapping(value="readBooks",method=RequestMethod.GET,produces="application/json")
+
+	@RequestMapping(value = "readBooks", method = RequestMethod.GET, produces = "application/json")
 	@Transactional
 	public List<Book> readBooks() throws SQLException {
 		List<Book> books = new ArrayList<>();
-		 try {
-			 
-			 books = bookdao.readBooks("");
-			 for(Book b : books) {
-				 b.setAuthors(adao.readAuthorsByBookId(b));
-				 b.setGenres(genredao.getGenresByBookId(b));
-				 b.setPublisher(publisherdao.getPublierbyBookId(b));
-				 b.setBookcopies(bookCopiesdao.getBookCopiesByBookId(b));
-			 }
-			 
-			 return books;
-			
+		try {
+
+			books = bookdao.readBooks("");
+			for (Book b : books) {
+				b.setAuthors(adao.readAuthorsByBookId(b));
+				b.setGenres(genredao.getGenresByBookId(b));
+				b.setPublisher(publisherdao.getPublierbyBookId(b));
+				b.setBookcopies(bookCopiesdao.getBookCopiesByBookId(b));
+			}
+
+			return books;
+
 		} catch (ClassNotFoundException | SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		 return null;
+		return null;
 	}
-	
+
 	// read book by title
-	@RequestMapping(value="readBooksByTitle/{searchTitle}",method=RequestMethod.GET,produces="application/json")
+	@RequestMapping(value = "readBooksByTitle/{searchTitle}", method = RequestMethod.GET, produces = "application/json")
 	@Transactional
 	public List<Book> readBooksByTitle(@PathVariable String searchTitle) throws SQLException {
-		List<Book> books = new ArrayList<>(); 
+		List<Book> books = new ArrayList<>();
 		try {
-			 books =  bookdao.readBooks(searchTitle);
-			 for(Book book : books) {
-				 book.setAuthors(adao.readAuthorsByBookId(book));
-				 book.setGenres(genredao.getGenresByBookId(book));
-				 book.setPublisher(publisherdao.getPublierbyBookId(book));
-				 book.setBookcopies(bookCopiesdao.getBookCopiesByBookId(book));
-			 }
-			 return books;
-			
+			books = bookdao.readBooks(searchTitle);
+			for (Book book : books) {
+				book.setAuthors(adao.readAuthorsByBookId(book));
+				book.setGenres(genredao.getGenresByBookId(book));
+				book.setPublisher(publisherdao.getPublierbyBookId(book));
+				book.setBookcopies(bookCopiesdao.getBookCopiesByBookId(book));
+			}
+			return books;
+
 		} catch (ClassNotFoundException | SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		 return null;
+		return null;
 	}
-	
+
 	// update Publisher
-	@RequestMapping(value="updatePublisher",method=RequestMethod.POST,consumes="application/json")
+	@RequestMapping(value = "updatePublisher", method = RequestMethod.POST, consumes = "application/json")
 	@Transactional
-	public void updatePublisher(@RequestBody  Publisher publisher) throws SQLException {
-	
+	public void updatePublisher(@RequestBody Publisher publisher) throws SQLException {
+
 		try {
 			if (publisher.getPublisherId() != null && publisher.getPublisherName() != null
 					&& publisher.getPublisherAddress() != null && publisher.getPublisherPhone() != null) {
@@ -214,11 +210,11 @@ public class AdminService extends BaseController {
 			// TODO Auto-generated catch block
 		}
 	}
-	
+
 	// read Publisher
-	@RequestMapping(value="readPublishers",method=RequestMethod.GET,produces="application/json")
+	@RequestMapping(value = "readPublishers", method = RequestMethod.GET, produces = "application/json")
 	@Transactional
-	public List<Publisher> readPublisher() throws SQLException{
+	public List<Publisher> readPublisher() throws SQLException {
 		List<Publisher> publishers = new ArrayList<>();
 		try {
 			publishers = publisherdao.readPublishers("");
@@ -232,13 +228,13 @@ public class AdminService extends BaseController {
 		}
 		return null;
 	}
-	
-	@RequestMapping(value="readPublisherByName/{searchPublisher}",method=RequestMethod.GET,produces="application/json")
+
+	@RequestMapping(value = "readPublisherByName/{searchPublisher}", method = RequestMethod.GET, produces = "application/json")
 	@Transactional
-	public List<Publisher> readPublisher(@PathVariable String searchPublisher) throws SQLException{
+	public List<Publisher> readPublisher(@PathVariable String searchPublisher) throws SQLException {
 		List<Publisher> publishers = new ArrayList<>();
 		try {
-			publishers =publisherdao.readPublishers(searchPublisher);
+			publishers = publisherdao.readPublishers(searchPublisher);
 			for (Publisher p : publishers) {
 				p.setBooks(bookdao.readBooksByPublisherId(p));
 			}
@@ -249,52 +245,33 @@ public class AdminService extends BaseController {
 		}
 		return null;
 	}
-	
-	
+
 	// update Genre
-	@RequestMapping(value="updateGenre",method=RequestMethod.POST,consumes="application/json")
+	@RequestMapping(value = "updateGenre", method = RequestMethod.POST, consumes = "application/json")
 	@Transactional
 	public void updateGenre(@RequestBody Genre genre) throws SQLException {
 		try {
-			if(genre.getGenre_id()!=null && genre.getGenre_name()!=null) {
+			if (genre.getGenre_id() != null && genre.getGenre_name() != null) {
 				genredao.updateGenre(genre);
-			}else if(genre.getGenre_id() == null && genre.getGenre_name() !=null) {
+			} else if (genre.getGenre_id() == null && genre.getGenre_name() != null) {
 				genredao.creatGenre(genre);
-			}else {
+			} else {
 				genredao.deleteGenre(genre);
 			}
 		} catch (ClassNotFoundException | SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();	
-		}
-	}
-	
-	// read Genre
-	
-	@Transactional
-	@RequestMapping(value="readGenres",method=RequestMethod.GET,produces="application/json")
-	public List<Genre> readGenres() throws SQLException {
-			List<Genre> genres = new ArrayList<>();
-		try {
-				genres = genredao.readGenres("");
-				for(Genre g : genres) {
-					g.setBooks(bookdao.readBooksByGenreId(g));
-				}
-				return genres;
-		} catch (ClassNotFoundException | SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return null;
-
 	}
-	
-	@RequestMapping(value="readGenreByName/{searchGenre}",method=RequestMethod.GET,produces="application/json")
+
+	// read Genre
+
 	@Transactional
-	public List<Genre> readGenreByName(@PathVariable String searchGenre) throws SQLException {
+	@RequestMapping(value = "readGenres", method = RequestMethod.GET, produces = "application/json")
+	public List<Genre> readGenres() throws SQLException {
 		List<Genre> genres = new ArrayList<>();
 		try {
-			genres =genredao.readGenres(searchGenre);
+			genres = genredao.readGenres("");
 			for (Genre g : genres) {
 				g.setBooks(bookdao.readBooksByGenreId(g));
 			}
@@ -306,10 +283,27 @@ public class AdminService extends BaseController {
 		return null;
 
 	}
-	
-	
-	//update Borrower
-	@RequestMapping(value="updateBorrower",method=RequestMethod.POST,consumes="application/json")
+
+	@RequestMapping(value = "readGenreByName/{searchGenre}", method = RequestMethod.GET, produces = "application/json")
+	@Transactional
+	public List<Genre> readGenreByName(@PathVariable String searchGenre) throws SQLException {
+		List<Genre> genres = new ArrayList<>();
+		try {
+			genres = genredao.readGenres(searchGenre);
+			for (Genre g : genres) {
+				g.setBooks(bookdao.readBooksByGenreId(g));
+			}
+			return genres;
+		} catch (ClassNotFoundException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+
+	// update Borrower
+	@RequestMapping(value = "updateBorrower", method = RequestMethod.POST, consumes = "application/json")
 	@Transactional
 	public void updateBorrower(@RequestBody Borrower borrower) throws SQLException {
 		try {
@@ -326,29 +320,28 @@ public class AdminService extends BaseController {
 			// TODO Auto-generated catch block
 		}
 	}
-	
+
 	// read Borrower
-	@RequestMapping(value="readBorrowers",method=RequestMethod.GET,produces="application/json")
+	@RequestMapping(value = "readBorrowers", method = RequestMethod.GET, produces = "application/json")
 	@Transactional
-	public List<Borrower> readBorrower() throws SQLException{
+	public List<Borrower> readBorrower() throws SQLException {
 		List<Borrower> borrowers = new ArrayList<>();
 		try {
-			     borrowers =  borrowerdao.readBorrowers("");
-			     for(Borrower b : borrowers) {
-			    	 b.setBookLoans(bookloandao.getBookLoansByCardNo(b));
-			     }
-			     return borrowers;
+			borrowers = borrowerdao.readBorrowers("");
+			for (Borrower b : borrowers) {
+				b.setBookLoans(bookloandao.getBookLoansByCardNo(b));
+			}
+			return borrowers;
 		} catch (ClassNotFoundException | SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
 	}
-	
-	
-	@RequestMapping(value="readBorrowerByCardNo/{cardNo}",method=RequestMethod.GET,produces="application/json")
+
+	@RequestMapping(value = "readBorrowerByCardNo/{cardNo}", method = RequestMethod.GET, produces = "application/json")
 	@Transactional
-	public Borrower readBorrowerByCardNo(@PathVariable String cardNo) throws SQLException{
+	public Borrower readBorrowerByCardNo(@PathVariable String cardNo) throws SQLException {
 		Borrower borrower = new Borrower();
 		try {
 			borrower = borrowerdao.readBorrowersByCardNo(Integer.parseInt(cardNo));
@@ -360,11 +353,10 @@ public class AdminService extends BaseController {
 		}
 		return null;
 	}
-	
-	
-	@RequestMapping(value="readBorrowerByName/{searchName}",method=RequestMethod.GET,produces="application/json")
+
+	@RequestMapping(value = "readBorrowerByName/{searchName}", method = RequestMethod.GET, produces = "application/json")
 	@Transactional
-	public List<Borrower> readBorrowerByName(@PathVariable String searchName) throws SQLException{
+	public List<Borrower> readBorrowerByName(@PathVariable String searchName) throws SQLException {
 		List<Borrower> borrwers = new ArrayList<>();
 		try {
 			borrwers = borrowerdao.readBorrowers(searchName);
@@ -378,9 +370,9 @@ public class AdminService extends BaseController {
 		}
 		return null;
 	}
-	
+
 	// Library Branch
-	@RequestMapping(value="updateBranch",method=RequestMethod.POST,consumes="application/json")
+	@RequestMapping(value = "updateBranch", method = RequestMethod.POST, consumes = "application/json")
 	@Transactional
 	public void updateBranch(@RequestBody Branch branch) throws SQLException {
 		try {
@@ -398,9 +390,9 @@ public class AdminService extends BaseController {
 			e.printStackTrace();
 		}
 	}
-	
+
 	// read Branch
-	@RequestMapping(value="readBranches",method=RequestMethod.GET,produces="application/json")
+	@RequestMapping(value = "readBranches", method = RequestMethod.GET, produces = "application/json")
 	@Transactional
 	public List<Branch> readBranches() throws SQLException {
 
@@ -417,8 +409,8 @@ public class AdminService extends BaseController {
 		}
 		return null;
 	}
-	
-	@RequestMapping(value="readBranchByName/{searchBranchName}",method=RequestMethod.GET,produces="application/json")
+
+	@RequestMapping(value = "readBranchByName/{searchBranchName}", method = RequestMethod.GET, produces = "application/json")
 	@Transactional
 	public List<Branch> readBranchByName(@PathVariable String searchBranchName) throws SQLException {
 		List<Branch> branches = new ArrayList<>();
@@ -433,12 +425,12 @@ public class AdminService extends BaseController {
 		}
 		return null;
 	}
-	
-	//Book Loan
-	@RequestMapping(value="updateBookLoan",method=RequestMethod.POST,consumes="application/json")
+
+	// Book Loan
+	@RequestMapping(value = "updateBookLoan", method = RequestMethod.POST, consumes = "application/json")
 	@Transactional
 	public void updateBookLoan(@RequestBody BookLoan bookLoan) throws SQLException {
-		
+
 		try {
 
 			if (bookLoan.getBookId() != null && bookLoan.getBranchId() != null && bookLoan.getCardNo() != null
@@ -457,12 +449,11 @@ public class AdminService extends BaseController {
 
 		}
 	}
-	
-	
-	// override  Book Loan Due Date
-	@RequestMapping(value="overrideBookLoanDueDate",method=RequestMethod.POST,consumes="application/json")
+
+	// override Book Loan Due Date
+	@RequestMapping(value = "overrideBookLoanDueDate", method = RequestMethod.POST, consumes = "application/json")
 	@Transactional
-	public void overrideBookLoanDueDate(@RequestBody BookLoan bookLoan) throws SQLException{
+	public void overrideBookLoanDueDate(@RequestBody BookLoan bookLoan) throws SQLException {
 
 		try {
 
@@ -473,10 +464,10 @@ public class AdminService extends BaseController {
 
 		}
 	}
-	
-	@RequestMapping(value="updateBookLoanDueDate",method=RequestMethod.POST,consumes="application/json")
+
+	@RequestMapping(value = "updateBookLoanDueDate", method = RequestMethod.POST, consumes = "application/json")
 	@Transactional
-	public void updateBookLoanDueDate(@RequestBody BookLoan bookLoan) throws SQLException{
+	public void updateBookLoanDueDate(@RequestBody BookLoan bookLoan) throws SQLException {
 
 		try {
 
