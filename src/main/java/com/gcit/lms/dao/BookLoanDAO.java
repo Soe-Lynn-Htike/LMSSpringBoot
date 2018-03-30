@@ -58,18 +58,21 @@ public class BookLoanDAO extends BaseDAO<BookLoan> implements ResultSetExtractor
 	public List<BookLoan> extractData(ResultSet rs) throws SQLException {
 		// TODO Auto-generated method stub
 		List<BookLoan> bookLoans = new ArrayList<>();
-		while (rs.next()) {
-			BookLoan a = new BookLoan();
-			a.setBookId(rs.getInt("bookId"));
-			a.setBranchId(rs.getInt("branchId"));
-			a.setCardNo(rs.getInt("cardNo"));
-			a.setDateOut(rs.getDate("dateOut").toString());
-			a.setDueDate(rs.getDate("dueDate").toString());
-			a.setDateIn(rs.getDate("dateIn").toString());
+		if(rs.next()) {
+			while (rs.next()) {
+				BookLoan a = new BookLoan();
+				a.setBookId(rs.getInt("bookId"));
+				a.setBranchId(rs.getInt("branchId"));
+				a.setCardNo(rs.getInt("cardNo"));
+				a.setDateOut(rs.getString("dateOut"));
+				a.setDueDate(rs.getString("dueDate"));
+				a.setDateIn(rs.getString("dateIn"));
 
-			bookLoans.add(a);
+				bookLoans.add(a);
+			}
+			return bookLoans;
 		}
-		return bookLoans;
+		return null;
 	}
 
 	

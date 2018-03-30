@@ -59,7 +59,7 @@ public class BorrowerDAO extends BaseDAO<Borrower> implements ResultSetExtractor
 	public List<Borrower> extractData(ResultSet rs) throws SQLException {
 		// TODO Auto-generated method stub
 		List<Borrower> borrowers = new ArrayList<>();
-		if (rs.next()) {
+	
 			
 			while (rs.next()) {
 				Borrower a = new Borrower();
@@ -70,10 +70,7 @@ public class BorrowerDAO extends BaseDAO<Borrower> implements ResultSetExtractor
 				borrowers.add(a);
 			}
 			return borrowers;
-		}
-		else {
-			return null;
-		}
+
 		// check error for cardno one
 		
 	}

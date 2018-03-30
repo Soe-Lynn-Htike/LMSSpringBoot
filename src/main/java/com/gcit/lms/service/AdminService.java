@@ -3,17 +3,14 @@
  */
 package com.gcit.lms.service;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
-import org.omg.Messaging.SYNC_WITH_TRANSPORT;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.BootstrapWith;
+
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -136,7 +133,6 @@ public class AdminService extends BaseController {
 			} else if (book.getBookId() == null && book.getTitle() != null) {
 				// bdao.createBook(book);
 				Integer bookId = bookdao.createBookWithPK(book);
-				Book bookvalue = new Book();
 				book.setBookId(bookId);
 				book.setPublisherId(book.getPublisherId());
 				// save in tbl_book_authors
@@ -337,8 +333,11 @@ public class AdminService extends BaseController {
 	@RequestMapping(value="readBorrowerByCardNo/{cardNo}",method=RequestMethod.GET,produces="application/json")
 	@Transactional
 	public Borrower readBorrowerByCardNo(@PathVariable String cardNo) throws SQLException{
+		Borrower borrower = new Borrower();
 		try {
-			     return borrowerdao.readBorrowersByCardNo(Integer.parseInt(cardNo));
+			borrower = borrowerdao.readBorrowersByCardNo(Integer.parseInt(cardNo));
+			borrower.setBookLoans(bookloandao.getBookLoansByCardNo(borrower));
+			return borrower;
 		} catch (ClassNotFoundException | SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
