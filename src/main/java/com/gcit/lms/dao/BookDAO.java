@@ -74,7 +74,6 @@ public class BookDAO extends BaseDAO<Book> implements ResultSetExtractor<List<Bo
 					new Object[] { genre.getGenre_id(), book.getBookId() });
 		}
 	}
-
 	public void updateBook(Book book) throws ClassNotFoundException, SQLException {
 
 		jdbcTemplate.update("update  tbl_book set bookTitle=? where bookId=?",
@@ -117,6 +116,7 @@ public class BookDAO extends BaseDAO<Book> implements ResultSetExtractor<List<Bo
 				"select * from tbl_book where bookId IN(select bookId from tbl_book_genres where genre_id=?)",
 				new Object[] { genre.getGenre_id() }, this);
 	}
+	
 	
 	public List<Book> readBooksByPublisherId(Publisher publisher) throws ClassNotFoundException, SQLException {
 

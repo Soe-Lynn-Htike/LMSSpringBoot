@@ -95,7 +95,7 @@ public class BorrowerService {
 		}
 	}
 	
-	@Transactional
+	/*@Transactional
 	public Borrower checkBorrowerByCardNo(Borrower borrower) throws ClassNotFoundException, SQLException {
 		try {
 
@@ -104,7 +104,7 @@ public class BorrowerService {
 			e.printStackTrace();
 		}
 		return null;
-	}
+	}*/
 	
 	@Transactional
 	public void returnBook(BookLoan bookLoan, BookCopies bookCopies) throws SQLException {

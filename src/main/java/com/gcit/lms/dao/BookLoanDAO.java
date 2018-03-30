@@ -13,6 +13,7 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
 import com.gcit.lms.entity.BookLoan;
+import com.gcit.lms.entity.Borrower;
 
 /**
  * @author Aaron
@@ -39,7 +40,9 @@ public class BookLoanDAO extends BaseDAO<BookLoan> implements ResultSetExtractor
 		jdbcTemplate.update("UPDATE tbl_book_loans SET dueDate = ? WHERE bookId = ? and branchId = ? and cardNo = ?",
 				new Object[] {bookLoan.getDueDate(), bookLoan.getBookId(), bookLoan.getBranchId(), bookLoan.getCardNo() });
 	}
-
+	public List<BookLoan> getBookLoansByCardNo(Borrower borrower)throws ClassNotFoundException, SQLException{
+		return jdbcTemplate.query("select * from tbl_book_loans where cardNo IN(select cardNo from tbl_borrower where cardNo=?)", new Object[]{borrower.getCardNo()},this);
+	}
 	public void updateBookLoanDateIn(BookLoan bookLoan) throws ClassNotFoundException, SQLException {
 		jdbcTemplate.update("UPDATE tbl_book_loans SET dateIn = curdate() WHERE bookId = ? and branchId = ? and cardNo = ?",
 				new Object[] { bookLoan.getBookId(), bookLoan.getBranchId(), bookLoan.getCardNo() });
@@ -60,9 +63,9 @@ public class BookLoanDAO extends BaseDAO<BookLoan> implements ResultSetExtractor
 			a.setBookId(rs.getInt("bookId"));
 			a.setBranchId(rs.getInt("branchId"));
 			a.setCardNo(rs.getInt("cardNo"));
-			a.setDateOut(rs.getString("dateOut"));
-			a.setDueDate(rs.getString("dueDate"));
-			a.setDateIn(rs.getString("dateIn"));
+			a.setDateOut(rs.getDate("dateOut").toString());
+			a.setDueDate(rs.getDate("dueDate").toString());
+			a.setDateIn(rs.getDate("dateIn").toString());
 
 			bookLoans.add(a);
 		}

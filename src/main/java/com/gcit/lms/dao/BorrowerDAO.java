@@ -13,6 +13,7 @@ import java.util.List;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
+import com.gcit.lms.entity.BookLoan;
 import com.gcit.lms.entity.Borrower;
 
 
@@ -33,41 +34,22 @@ public class BorrowerDAO extends BaseDAO<Borrower> implements ResultSetExtractor
 	public void deleteBorrower(Borrower borrower) throws ClassNotFoundException, SQLException {
 		jdbcTemplate.update("delete  from tbl_borrower where cardNo=?",new Object[] {borrower.getCardNo()});
 	}
-	public Borrower readBorrowersByCardNo(Borrower borrower ) throws ClassNotFoundException, SQLException{
-		List<Borrower> borrowers = jdbcTemplate.query("select * from tbl_borrower where cardNo=?", new Object[] {borrower.getCardNo()},this);
-		if(borrowers != null)
-		{
+	
+	public Borrower readBorrowersByCardNo(Integer cardNo) throws ClassNotFoundException, SQLException{
+		List<Borrower> borrowers = new ArrayList<>();
+
+		borrowers = jdbcTemplate.query("select * from tbl_borrower where cardNo=?", new Object[] { cardNo }, this);
+		if (!borrowers.isEmpty()) {
 			return borrowers.get(0);
 		}
 		return null;
-		// ask for that error
-		/*Borrower a = new Borrower();
-		ConnectionUtilities conUtil = new ConnectionUtilities();
-		Connection conn = conUtil.getConnection();
-		PreparedStatement stmt=conn.prepareStatement("select * from tbl_borrower where cardNo=?");
-		stmt.setInt(1,borrower.getCardNo());
-		ResultSet rs = stmt.executeQuery();
-		// check empty or not for result 
-		if(!rs.isBeforeFirst()) {
-			return null;
-		}
-		else {
-			while(rs.next()){
-				a.setCardNo(rs.getInt("cardNo"));
-				a.setName(rs.getString("name"));
-				a.setAddress(rs.getString("address"));
-				a.setPhone(rs.getString("Phone"));
-			}
-			return a;
-		}*/
-		// if(rs.next())
 		
 	}
-	public List<Borrower> readBorrowers(Borrower borrower) throws ClassNotFoundException, SQLException{
-		String name ;
-		if(borrower.getName() !=null && !borrower.getName().isEmpty()){
-			name = "%"+borrower.getName()+"%";
-			return jdbcTemplate.query("select * from tbl_borrower where name like ?", new Object[]{name},this);
+	public List<Borrower> readBorrowers(String searchBorrower) throws ClassNotFoundException, SQLException{
+		
+		if(searchBorrower!=null && !searchBorrower.isEmpty()){
+			searchBorrower = "%"+searchBorrower+"%";
+			return jdbcTemplate.query("select * from tbl_borrower where name like ?", new Object[]{searchBorrower},this);
 		}else{
 			return jdbcTemplate.query("select * from tbl_borrower", this);
 		}
@@ -84,11 +66,15 @@ public class BorrowerDAO extends BaseDAO<Borrower> implements ResultSetExtractor
 				a.setCardNo(rs.getInt("cardNo"));
 				a.setName(rs.getString("name"));
 				a.setAddress(rs.getString("address"));
+				a.setPhone(rs.getString("phone"));
 				borrowers.add(a);
 			}
-			
+			return borrowers;
+		}
+		else {
+			return null;
 		}
 		// check error for cardno one
-		return borrowers;
+		
 	}
 }

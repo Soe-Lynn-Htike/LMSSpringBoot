@@ -3,6 +3,8 @@
  */
 package com.gcit.lms.service;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -11,6 +13,7 @@ import java.util.Scanner;
 
 import org.omg.Messaging.SYNC_WITH_TRANSPORT;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.BootstrapWith;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -86,19 +89,6 @@ public class AdminService extends BaseController {
 		}
 	}
 	
-	//read author
-	/*
-	public void readAuthor(Author author) throws SQLException {
-		
-		try {
-
-			adao.readAuthors(author.getAuthorName());
-		} catch (ClassNotFoundException | SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-
-		}
-	}*/
 	
 	@RequestMapping(value="readAuthors",method=RequestMethod.GET,produces="application/json")
 	@Transactional
@@ -140,13 +130,9 @@ public class AdminService extends BaseController {
 	public void updateBook(Book book) throws SQLException {
 		
 		try {
-
-			// PublisherDAO pdao = new PublisherDAO(conn);
 			if (book.getBookId() != null && book.getTitle() != null) {
 				bookdao.updateBook(book);
 
-				// call update book genre
-				// call update book author
 			} else if (book.getBookId() == null && book.getTitle() != null) {
 				// bdao.createBook(book);
 				Integer bookId = bookdao.createBookWithPK(book);
@@ -198,9 +184,9 @@ public class AdminService extends BaseController {
 	}
 	
 	// update Publisher
-	
+	@RequestMapping(value="updatePublisher",method=RequestMethod.POST,consumes="application/json")
 	@Transactional
-	public void updatePublisher(Publisher publisher) throws SQLException {
+	public void updatePublisher(@RequestBody  Publisher publisher) throws SQLException {
 	
 		try {
 			if (publisher.getPublisherId() != null && publisher.getPublisherName() != null
@@ -254,9 +240,9 @@ public class AdminService extends BaseController {
 	
 	
 	// update Genre
-	
+	@RequestMapping(value="updateGenre",method=RequestMethod.POST,consumes="application/json")
 	@Transactional
-	public void updateGenre(Genre genre) throws SQLException {
+	public void updateGenre(@RequestBody Genre genre) throws SQLException {
 		try {
 			if(genre.getGenre_id()!=null && genre.getGenre_name()!=null) {
 				genredao.updateGenre(genre);
@@ -311,6 +297,7 @@ public class AdminService extends BaseController {
 	
 	
 	//update Borrower
+	
 	@Transactional
 	public void updateBorrower(Borrower borrower) throws SQLException {
 		try {
@@ -329,10 +316,47 @@ public class AdminService extends BaseController {
 	}
 	
 	// read Borrower
+	@RequestMapping(value="readBorrowers",method=RequestMethod.GET,produces="application/json")
 	@Transactional
-	public List<Borrower> readBorrower(Borrower borrower) throws SQLException{
+	public List<Borrower> readBorrower() throws SQLException{
+		List<Borrower> borrowers = new ArrayList<>();
 		try {
-			return borrowerdao.readBorrowers(borrower);
+			     borrowers =  borrowerdao.readBorrowers("");
+			     for(Borrower b : borrowers) {
+			    	 b.setBookLoans(bookloandao.getBookLoansByCardNo(b));
+			     }
+			     return borrowers;
+		} catch (ClassNotFoundException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
+	@RequestMapping(value="readBorrowerByCardNo/{cardNo}",method=RequestMethod.GET,produces="application/json")
+	@Transactional
+	public Borrower readBorrowerByCardNo(@PathVariable String cardNo) throws SQLException{
+		try {
+			     return borrowerdao.readBorrowersByCardNo(Integer.parseInt(cardNo));
+		} catch (ClassNotFoundException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
+	@RequestMapping(value="readBorrowerByName/{searchName}",method=RequestMethod.GET,produces="application/json")
+	@Transactional
+	public List<Borrower> readBorrowerByName(@PathVariable String searchName) throws SQLException{
+		List<Borrower> borrwers = new ArrayList<>();
+		try {
+			borrwers = borrowerdao.readBorrowers(searchName);
+			for (Borrower b : borrwers) {
+				b.setBookLoans(bookloandao.getBookLoansByCardNo(b));
+			}
+			return borrwers;
 		} catch (ClassNotFoundException | SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
