@@ -45,7 +45,7 @@ public class BookDAO extends BaseDAO<Book> implements ResultSetExtractor<List<Bo
 		GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
 
 		// the name of the generated column (you can track more than one column)
-		String id_column = "ID";
+		String id_column = "bookId";
 
 		// the update method takes an implementation of PreparedStatementCreator which
 		// could be a lambda
@@ -79,17 +79,20 @@ public class BookDAO extends BaseDAO<Book> implements ResultSetExtractor<List<Bo
 		jdbcTemplate.update("update  tbl_book set bookTitle=? where bookId=?",
 				new Object[] { book.getTitle(), book.getBookId() });
 	}
+	public void updateBookByPublisherId(Book book) throws ClassNotFoundException, SQLException {
 
+		jdbcTemplate.update("update  tbl_book set pubId=? where bookId=?",
+				new Object[] { book.getPublisherId(), book.getBookId() });
+	}
 	public void deleteBook(Book book) throws ClassNotFoundException, SQLException {
 
 		jdbcTemplate.update("delete tbl_book from where bookId = ?", new Object[] { book.getBookId() });
 	}
 
-	public List<Book> readBooksByBorrower(Branch branch, Borrower borrower)
-			throws ClassNotFoundException, SQLException {
+	public List<Book> readBooksByBorrower(Integer cardNo)throws ClassNotFoundException, SQLException {
 		return jdbcTemplate.query(
-				"select * from tbl_book where bookId IN (select bookId from tbl_book_loans where branchId =? and cardNo =?)",
-				new Object[] { branch.getBranchId(), borrower.getCardNo() }, this);
+				"select * from tbl_book where bookId IN (select bookId from tbl_book_loans where cardNo =?)",
+				new Object[] { cardNo }, this);
 	}
 
 

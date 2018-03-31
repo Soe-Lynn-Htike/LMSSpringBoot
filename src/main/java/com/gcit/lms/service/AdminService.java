@@ -132,6 +132,7 @@ public class AdminService extends BaseController {
 				Integer bookId = bookdao.createBookWithPK(book);
 				book.setBookId(bookId);
 				book.setPublisherId(book.getPublisherId());
+				bookdao.updateBookByPublisherId(book);
 				bookdao.saveBookAuthor(book);
 				bookdao.saveBookGenre(book);
 				// add to book genre

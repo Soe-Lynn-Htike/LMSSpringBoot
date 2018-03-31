@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import com.gcit.lms.entity.Book;
 import com.gcit.lms.entity.BookCopies;
+import com.gcit.lms.entity.BookLoan;
 import com.gcit.lms.entity.Branch;
 
 /**
@@ -60,12 +61,12 @@ public class BookCopiesDAO extends BaseDAO<BookCopies> implements ResultSetExtra
 		return jdbcTemplate.query("select * from tbl_book_copies where branchId in (select branchId from tbl_library_branch where branchId =?)", new Object[] {branch.getBranchId()},this);
 	}
 	
-	public void checkOutBookCopies(BookCopies bookCopies) throws ClassNotFoundException, SQLException {
-		jdbcTemplate.update("update tbl_book_copies set noOfCopies = noOfCopies-1 where bookId = ? and branchId = ?",new Object[] { bookCopies.getBookId(), bookCopies.getBranchId() });		
+	public void checkOutBookCopies(BookLoan bookLoan) throws ClassNotFoundException, SQLException {
+		jdbcTemplate.update("update tbl_book_copies set noOfCopies = noOfCopies-1 where bookId = ? and branchId = ?",new Object[] { bookLoan.getBookId(), bookLoan.getBranchId() });		
 	}
 	
-	public void returnBookCopies(BookCopies bookCopies) throws ClassNotFoundException,SQLException {
-		jdbcTemplate.update("update tbl_book_copies set noOfCopies = noOfCopies+1 where bookId = ? and branchId = ?",new Object[] { bookCopies.getBookId(), bookCopies.getBranchId() });		
+	public void returnBookCopies(BookLoan bookLoan) throws ClassNotFoundException,SQLException {
+		jdbcTemplate.update("update tbl_book_copies set noOfCopies = noOfCopies+1 where bookId = ? and branchId = ?",new Object[] { bookLoan.getBookId(), bookLoan.getBranchId() });		
 	}
 	/*public BookCopies readOne(int bookId, int branchId) throws Exception { 
  		List<BookCopies> bookCopies = (List<BookCopies>) readAll("select * from tbl_book_copies where bookId = ? " 

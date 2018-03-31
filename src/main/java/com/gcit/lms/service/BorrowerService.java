@@ -11,6 +11,11 @@ import java.util.Scanner;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.gcit.lms.dao.AuthorDAO;
 import com.gcit.lms.dao.BookCopiesDAO;
@@ -31,7 +36,8 @@ import com.gcit.lms.entity.Branch;
  * @author Aaron
  *
  */
-public class BorrowerService {
+@RestController
+public class BorrowerService extends BaseController {
 
 	@Autowired
 	 AuthorDAO adao;
@@ -58,7 +64,7 @@ public class BorrowerService {
 	BookLoanDAO bookloandao;
 	
 	
-	@Transactional
+	/*@Transactional
 	public List<Branch> readBranch(String branchname) throws SQLException {
 
 		try {
@@ -68,28 +74,29 @@ public class BorrowerService {
 			e.printStackTrace();
 		}
 		return null;
-	}
+	}*/
 	
 	
 	/*@Transactional
-	public List<Book> readBooksCheckOut(Branch branch) throws SQLException {
+	public List<Book> readBooksCheckOut(String branchId) throws SQLException {
 		
 		try {
 
-			return bookdao.readBooksByBranch(branch);
+			return bookdao.readBooksByBranch(Integer.parseInt(branchId));
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}*/
 	
+	
+	@RequestMapping(value = "checkOutBook", method = RequestMethod.POST, consumes = "application/json")
 	@Transactional
-	public void checkOutBook(BookLoan bookLoan, BookCopies bookCopies) throws SQLException {
+	public void checkOutBook(@RequestBody BookLoan bookLoan) throws SQLException {
 
 		try {
-
-			bookloandao.creatBookLoan(bookLoan);
-			bookCopiesdao.checkOutBookCopies(bookCopies);
+			bookloandao.creatBookLoan(bookLoan); // book,branch
+			bookCopiesdao.checkOutBookCopies(bookLoan);
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
@@ -105,24 +112,25 @@ public class BorrowerService {
 		}
 		return null;
 	}*/
-	
+	@RequestMapping(value = "returnBook", method = RequestMethod.POST, consumes = "application/json")
 	@Transactional
-	public void returnBook(BookLoan bookLoan, BookCopies bookCopies) throws SQLException {
+	public void returnBook(@RequestBody BookLoan bookLoan) throws SQLException {
 		
 		try {
 			bookloandao.updateBookLoanDateIn(bookLoan);
-			bookCopiesdao.returnBookCopies(bookCopies);
+			bookCopiesdao.returnBookCopies(bookLoan);
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
 	}
 	
+	@RequestMapping(value = "readBooksReturn/{cardNo}", method = RequestMethod.GET, consumes = "application/json")
 	@Transactional
-	public List<Book> readBooksReturn (Branch branch, Borrower borrower) throws SQLException {
+	public List<Book> readBooksReturn (@PathVariable String cardNo) throws SQLException {
 
 		try {
 
-			return bookdao.readBooksByBorrower(branch, borrower);
+			return bookdao.readBooksByBorrower(Integer.parseInt(cardNo));
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
